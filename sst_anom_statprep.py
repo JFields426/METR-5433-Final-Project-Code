@@ -1,14 +1,15 @@
 import xarray as xr
 
-# ---------------------
-# Load anomalies
-# ---------------------
-anom_input_path = '/share/data1/Students/jfields/finalproj/sst_anomalies_2020_2022.nc'
+#########################################################################
+#REQUIRED USER INPUTS: 
+
+#Line 10: Define file path and name for the input file
+#Line 31: Define file path and name for the output file
+#########################################################################
+
+anom_input_path = '/file_path/sst_anomalies.yyyymm1_yyyymm2.nc'
 anomalies = xr.open_dataset(anom_input_path)['sst']
 
-# ---------------------
-# Detrend anomalies (remove linear trend at each grid point)
-# ---------------------
 # Add numeric time coordinate
 time_numeric = xr.DataArray(
     anomalies['time'].dt.year + (anomalies['time'].dt.dayofyear - 1) / 365.25,
@@ -26,26 +27,8 @@ detrended_anomalies = anomalies - trend
 
 detrended_anomalies.name = 'sst_anom'
 
-# ---------------------
-# Standardize anomalies (mean 0, std 1 at each grid point)
-# ---------------------
-#mean = detrended_anomalies.mean(dim='time', skipna=True)
-#std = detrended_anomalies.std(dim='time', skipna=True)
-
-#standardized_anomalies = (detrended_anomalies - mean) / std
-
-# Name the variable explicitly
-#standardized_anomalies.name = 'sst_anom_std'
-
-# ---------------------
-# Save standardized anomalies
-# ---------------------
-#standardized_output_path = '/share/data1/Students/jfields/finalproj/sst_anomalies_detrended_standardized_2020_2022.nc'
-#standardized_anomalies.to_netcdf(standardized_output_path, format='NETCDF4_CLASSIC')
-
-#print(f"Detrended and standardized anomalies saved to {standardized_output_path}")
-
-output_path = '/share/data1/Students/jfields/finalproj/sst_anomalies_detrended_2020_2022.nc'
+#Save dataset
+output_path = '/file_path/sst_anomalies_detrended.yyyymm1_yyyymm2.nc'
 detrended_anomalies.to_netcdf(output_path, format='NETCDF4_CLASSIC')
 
 print(f"Detrended anomalies saved to {output_path}")
