@@ -6,7 +6,10 @@ import re
 #########################################################################
 #REQUIRED USER INPUTS: 
 
-#Line : 
+#Line 16: Define file path for ERA5 SST input files
+#Line 17: Define file path for SST climatology file (update file name if different time range was used)
+#Line 27: Change yyyymm1 and yyyymm2 to the start and end files for your selected time range
+#Line 62: Define file path and file name for the output file
 #########################################################################
 
 #Call in ERA5 sea surface temperature reanalysis data (assumes data is already downloaded)
@@ -54,9 +57,9 @@ for file_path in target_files:
 
     print(f"Processed anomalies: {file_path}")
 
-
+#Combine anomalies into one dataset and save
 sst_anomalies_combined = xr.concat(anomaly_list, dim='time')
-anom_output_path = '/share/data1/Students/jfields/finalproj/sst_anomalies_1950_2022.nc'
+anom_output_path = '/file_path/sst_anomalies.yyyymm1_yyyymm2.nc'
 sst_anomalies_combined.to_netcdf(anom_output_path, format='NETCDF4_CLASSIC')
 
 print(f"SST anomalies saved to {anom_output_path}")
