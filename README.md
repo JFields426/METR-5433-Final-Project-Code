@@ -10,14 +10,14 @@ THE FOLLOWING ORDERED LIST DESCRIBES THE STEPS TO COMPUTE AND TEST SIGNIFICANCE 
 
 4. region_block.py - Determines the central coordinate of blocking events at their first time step. Subsequently isolates blocks that form in                         the Northern Atlantic reigon.
 
-5. blockinfo.py - 
+5. blockinfo.py - Creates a .csv file with information for each block including duration, mininum and maximum size, etc. Useful for verifying                      the amount of unique blocking events. (NOTE: StitchBlobs gives each block a sequential ID based on start time. The region                        filtering does not reassign ID numbers, so non-consecutive block IDs is normal and expected.)
 
-6. sst_climo.py
+6. sst_climo.py - Calculates SST climatology.
 
-7. sst_anom.py
+7. sst_anom.py - Calcualtes SST anomalies based on climatology.
 
-8. sst_anom_statprep.py
+8. sst_anom_statprep.py - Detrends SST anomalies to account for the change in average SST over time.
 
-9. composite.py
+9. composite.py - Calculates composite difference between blocked and non-blocked days and plots the resulting maps for each lag. Additionally,                    it creates a list of days considered blocked an non-blocked for each lag (this is important for significance testing).
 
-10. bootstrap.py
+10. bootstrap.py - Tests significance of the composite differences using bootstrapping. Plots sample PDF histogram for a random point to                            visualize significance. Plots composite difference maps for each lag with stippling for stastistically significant points.
