@@ -1,8 +1,14 @@
 import xarray as xr
 import numpy as np
 
-# Load the dataset
-infile = '/share/data1/Students/jfields/TempestExtremes/BlockID/hgt.20202022_blockid_AGP_nofilt.nc'
+#########################################################################
+#REQUIRED USER INPUTS: 
+
+#Line : 
+#########################################################################
+
+# Load the blockid data containing unique blocks
+infile = '/file_path/blockid.yyyymm2_yyyymm2.nc'
 ds = xr.open_dataset(infile)
 
 object_id = ds['object_id']
