@@ -5,11 +5,21 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
+#########################################################################
+#REQUIRED USER INPUTS: 
+
+#Line 22: Define file path for the input composite files
+#Line 30: Define file path and name for detrended SST anomaly input file
+#Line 35: Define file path for the input composite date list file
+#Line 117: Define file path for the histogram plots output file
+#Line 170: Define file path for the stippled composite plots output file
+#########################################################################
+
 # Load composite differences
 composites = {}
 lags = [0, 5, 10, 15]
 for lag in lags:
-    ds = xr.open_dataset(f'sst_compDiff_{lag}d.nc')
+    ds = xr.open_dataset(f'/file_path/sst_compDiff_{lag}d.nc')
     comp = ds['compDiff']
     if comp.longitude.max() > 180:
         comp = comp.assign_coords(longitude=(((comp.longitude + 180) % 360) - 180))
@@ -17,12 +27,12 @@ for lag in lags:
     composites[lag] = comp
 
 # Load SST anomalies
-sst_ds = xr.open_dataset('sst_anomalies_detrended_2020_2022.nc')
+sst_ds = xr.open_dataset('/file_path/sst_anomalies_detrended.yyyymm1_yyyymm2.nc')
 sst_anom = sst_ds['sst_anom']
 sst_times = pd.to_datetime(sst_ds['time'].values)
 
 # Load composite dates
-date_df = pd.read_csv('composite_dates.csv')
+date_df = pd.read_csv('/file_path/composite_dates.csv')
 date_df['date'] = pd.to_datetime(date_df['date'])
 
 # Prepare bootstrap results
@@ -30,7 +40,7 @@ bootstrap_pvals = {}
 boot_diffs_all = {}
 n_bootstrap = 5000
 
-# Create ocean mask & select one random ocean point (optionally user-defined)
+# Create ocean mask & select one random ocean point
 sst_mean = sst_anom.mean(dim='time')
 if sst_mean.longitude.max() > 180:
     sst_mean = sst_mean.assign_coords(longitude=(((sst_mean.longitude + 180) % 360) - 180))
@@ -40,7 +50,7 @@ ocean_mask = ~np.isnan(sst_mean)
 valid_points = np.argwhere(ocean_mask.values)
 
 # Optional manual override (row, col indices)
-manual_row_col = None  # Example: (40, 60)
+manual_row_col = None 
 if manual_row_col:
     random_row, random_col = manual_row_col
 else:
@@ -104,7 +114,7 @@ for i, lag in enumerate(lags):
     ax.legend()
 
 plt.tight_layout()
-plt.savefig('bootstrap_histograms_random_point.png', dpi=300)
+plt.savefig('/file_path/bootstrap_histograms_random_point.png', dpi=300)
 plt.close()
 
 # Plot composite maps with stippling only over ocean
@@ -157,5 +167,5 @@ cbar.set_label('SST Composite Difference')
 fig.suptitle("SST Composite Difference with Significant Ocean Points (p < 0.05)\n30°N–80°N, 70°W–0°E", fontsize=16)
 fig.subplots_adjust(wspace=0.1, hspace=0.2, top=0.92, bottom=0.15)
 
-plt.savefig('sst_composite_diff_with_significance.png', dpi=300)
+plt.savefig('/file_path/sst_composite_diff_with_significance.png', dpi=300)
 plt.close()
