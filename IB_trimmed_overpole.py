@@ -3,10 +3,11 @@ import numpy as np
 import glob
 
 ###################################################################################################################
-#REQUIRED USER INPUTS
-#Line 22: Define preferred file path
-#Line 28: replace yyyymm to select file range (e.g. 'hgt.195001', 'hgt.202212.nc' for 1950-01 to 2022-12)
-#Line 113: Define preferred file path and file name (replace yyyymm1 to starting month and yyyymm2 to ending month)
+#REQUIRED USER INPUTS:
+
+#Line 24: Define preferred file path
+#Line 30: replace yyyymm to select file range (e.g. 'hgt.195001', 'hgt.202212.nc' for 1950-01 to 2022-12)
+#Line 115: Define preferred file path and file name (replace yyyymm1 to starting month and yyyymm2 to ending month)
 ###################################################################################################################
 
 # Define the latitude ranges to calculate thresholds, including adjustments for latitudes above 70 degrees
