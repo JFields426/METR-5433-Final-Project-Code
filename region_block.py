@@ -48,8 +48,8 @@ for block_id in unique_ids:
     # Adjust longitude to 0–360 if needed
     center_lon = center_lon % 360
 
-    # Check if center is within 30°N–80°N, 70°W–0°E (i.e., 290°–360°)
-    if 30 <= center_lat <= 80 and (290 <= center_lon <= 360 or 0 <= center_lon <= 0):
+    # Check if center is within 35°N–80°N, 70°W–0°E (i.e., 290°–360°)
+    if 35 <= center_lat <= 80 and (290 <= center_lon <= 360 or 0 <= center_lon <= 0):
         # Keep this block
         mask = mask.where(~block_mask, block_mask)
 
