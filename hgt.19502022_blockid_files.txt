@@ -1,1 +1,7 @@
-/share/data1/Students/jfields/TempestExtremes/BlockID/hgt.19502022_blockid_AGP.nc
+#################################################################
+#REQUIRED USER INPUTS: 
+
+#Line 7: Replace with file path of output file for StitchBlobs.py
+#################################################################
+
+/file_path/blockid.yyyymm_yyyymm.nc
