@@ -1,14 +1,15 @@
 import xarray as xr
 import numpy as np
 
-#########################################################################
+###################################################################
 #REQUIRED USER INPUTS: 
 
-#Line : 
-#########################################################################
+#Line 12: Define preferred file path for block ID file
+#Line 66: Define preferred file path for region-filtered block file
+###################################################################
 
 # Load the blockid data containing unique blocks
-infile = '/file_path/blockid.yyyymm2_yyyymm2.nc'
+infile = '/file_path/blockid.yyyymm1_yyyymm2.nc'
 ds = xr.open_dataset(infile)
 
 object_id = ds['object_id']
@@ -43,6 +44,7 @@ for block_id in unique_ids:
     block_lons = lon[lon_idxs]
     center_lat = np.mean(block_lats)
     center_lon = np.mean(block_lons)
+    
     # Adjust longitude to 0–360 if needed
     center_lon = center_lon % 360
 
@@ -61,7 +63,7 @@ filtered_ds = xr.Dataset(
 )
 
 # Save to new NetCDF file
-outfile = '/share/data1/Students/jfields/finalproj/hgt.20202022_regionblock.nc'
+outfile = '/file_path/regionblock.yyyymm1_yyyymm2.nc'
 filtered_ds.to_netcdf(outfile)
 
 print(f"Filtered file saved to {outfile}")
