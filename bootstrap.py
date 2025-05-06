@@ -23,7 +23,7 @@ for lag in lags:
     comp = ds['compDiff']
     if comp.longitude.max() > 180:
         comp = comp.assign_coords(longitude=(((comp.longitude + 180) % 360) - 180))
-    comp = comp.sel(latitude=slice(80, 30), longitude=slice(-70, 0)).sortby(['latitude', 'longitude'])
+    comp = comp.sel(latitude=slice(80, 35), longitude=slice(-70, 0)).sortby(['latitude', 'longitude'])
     composites[lag] = comp
 
 # Load SST anomalies
@@ -44,7 +44,7 @@ n_bootstrap = 5000
 sst_mean = sst_anom.mean(dim='time')
 if sst_mean.longitude.max() > 180:
     sst_mean = sst_mean.assign_coords(longitude=(((sst_mean.longitude + 180) % 360) - 180))
-sst_mean = sst_mean.sel(latitude=slice(80, 30), longitude=slice(-70, 0)).sortby(['latitude', 'longitude'])
+sst_mean = sst_mean.sel(latitude=slice(80, 35), longitude=slice(-70, 0)).sortby(['latitude', 'longitude'])
 
 ocean_mask = ~np.isnan(sst_mean)
 valid_points = np.argwhere(ocean_mask.values)
@@ -152,9 +152,9 @@ for i, lag in enumerate(lags):
     ax.set_title(f"Lag {lag} days", fontsize=12)
     ax.coastlines(resolution='50m', linewidth=1)
     ax.add_feature(cfeature.BORDERS, linewidth=0.5)
-    ax.set_extent([-70, 0, 30, 80], crs=ccrs.PlateCarree())
+    ax.set_extent([-70, 0, 35, 80], crs=ccrs.PlateCarree())
     ax.set_xticks(np.arange(-70, 1, 10), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(30, 81, 10), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(35, 81, 10), crs=ccrs.PlateCarree())
     ax.set_xlabel('Longitude', fontsize=10)
     ax.set_ylabel('Latitude', fontsize=10)
     ax.tick_params(labelsize=8)
@@ -164,7 +164,7 @@ cbar_ax = fig.add_axes([0.25, 0.05, 0.5, 0.02])
 cbar = fig.colorbar(im, cax=cbar_ax, orientation='horizontal')
 cbar.set_label('SST Composite Difference')
 
-fig.suptitle("SST Composite Difference with Significant Ocean Points (p < 0.05)\n30°N–80°N, 70°W–0°E", fontsize=16)
+fig.suptitle("SST Composite Difference with Significant Ocean Points (p < 0.05)\n35°N–80°N, 70°W–0°E", fontsize=16)
 fig.subplots_adjust(wspace=0.1, hspace=0.2, top=0.92, bottom=0.15)
 
 plt.savefig('/file_path/sst_composite_diff_with_significance.png', dpi=300)
