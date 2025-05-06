@@ -3,32 +3,30 @@ import numpy as np
 import glob
 import re
 
-# ---------------------
-# Paths
-# ---------------------
-file_path_pattern = '/data/deluge/reanalysis/REANALYSIS/ERA5/2D/4xdaily/sst/sst.*.nc'
-climo_path = '/share/data1/Students/jfields/finalproj/sst_climo_1991_2020.nc'
+#########################################################################
+#REQUIRED USER INPUTS: 
 
-# ---------------------
-# Load climatology
-# ---------------------
+#Line : 
+#########################################################################
+
+#Call in ERA5 sea surface temperature reanalysis data (assumes data is already downloaded)
+file_path_pattern = '/file_path/sst.*.nc'
+climo_path = '/file_path/sst_climo_1991_2020.nc'
+
+#Calls in climatology file to calculate anomalies
 climatology = xr.open_dataset(climo_path)['sst']
 
-# ---------------------
-# Load SST files 2000–2022
-# ---------------------
+#Isolate files for the date range you want to calculate anomalies for
 all_files = glob.glob(file_path_pattern)
 target_files = [
     f for f in all_files
     if re.match(r'.*/sst\.(\d{6})\.nc$', f)
-    and 195001 <= int(re.search(r'sst\.(\d{6})\.nc$', f).group(1)) <= 202212
+    and yyyymm1 <= int(re.search(r'sst\.(\d{6})\.nc$', f).group(1)) <= yyyymm2
 ]
 
 target_files.sort(key=lambda x: int(re.search(r'sst\.(\d{6})\.nc$', x).group(1)))
 
-# ---------------------
-# Domain
-# ---------------------
+#Define spatial domain (30N-80N, 70W-0E)
 lat_min, lat_max = 30, 80
 lon_min, lon_max = (-70 % 360), (0 % 360)
 
@@ -56,9 +54,7 @@ for file_path in target_files:
 
     print(f"Processed anomalies: {file_path}")
 
-# ---------------------
-# Combine and Save
-# ---------------------
+
 sst_anomalies_combined = xr.concat(anomaly_list, dim='time')
 anom_output_path = '/share/data1/Students/jfields/finalproj/sst_anomalies_1950_2022.nc'
 sst_anomalies_combined.to_netcdf(anom_output_path, format='NETCDF4_CLASSIC')
