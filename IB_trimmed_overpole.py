@@ -2,23 +2,31 @@ import xarray as xr
 import numpy as np
 import glob
 
-# Define the latitude ranges, including adjustments for latitudes above 70 degrees
+#########################################################################################################
+#REQUIRED USER INPUTS
+#Line 22: Define preferred file path
+#Line 28: replace yyyymm to select file range (e.g. 'hgt.195001', 'hgt.202212.nc' for 1950-01 to 2022-12)
+#Line 113: Define preferred file path and file name
+#########################################################################################################
+
+# Define the latitude ranges to calculate thresholds, including adjustments for latitudes above 70 degrees
 lat0_range = np.arange(35, 90.5, 0.5)  # Full range from 35 to 90 degrees
 latS_range = np.where(lat0_range > 70, lat0_range - (90 - lat0_range), lat0_range - 20)
 latN_range = np.where(lat0_range > 70, lat0_range + (90 - lat0_range), lat0_range + 20)
 lat15S_range = np.where(lat0_range > 70, lat0_range - (90 - lat0_range) * 0.75, lat0_range - 15)
 lat30S_range = np.where(lat0_range > 70, lat0_range - (90 - lat0_range) * 1.5, lat0_range - 30)
 
+#Isolate 500hPa geopotential height level
 pressure_level = 500
 
-# Define the file path pattern
-file_path_pattern = '/data/deluge/reanalysis/REANALYSIS/ERA5/3D/4xdaily/hgt/hgt.*.nc'
+# Define the file path pattern (this assumes ERA5 reanalysis files are already downloaded)
+file_path_pattern = '/file_path/hgt.*.nc'
 
 # Get a list of all files matching the pattern
 all_files = glob.glob(file_path_pattern)
 
-# Filter files based on the specified range (1950-01 to 2022-12)
-filtered_files = [f for f in all_files if 'hgt.202001' <= f.split('/')[-1] <= 'hgt.202212.nc']
+# Filter files based on the specified temporal range
+filtered_files = [f for f in all_files if 'hgt.yyyymm' <= f.split('/')[-1] <= 'hgt.yyyymm.nc']
 
 # Ensure filtered_files is sorted correctly
 filtered_files.sort(key=lambda x: int(x.split('/')[-1].split('.')[1]))
@@ -55,7 +63,7 @@ for file_path in filtered_files:
     GHGS = (Z500_lat0.values - Z500_latS.values) / 20
     GHGN = (Z500_latN.values - Z500_lat0.values) / 20
 
-    # Calculate the additional gradient condition
+    # Calculate the low-latitude blocking filter
     gradient_S = (Z500_lat15S.values - Z500_lat30S.values)
 
     # Create a mask where all conditions are met
@@ -87,7 +95,7 @@ result = xr.Dataset({
     'GHGS': (('time', 'latitude', 'longitude'), GHGS_combined.data),
     'GHGN': (('time', 'latitude', 'longitude'), GHGN_combined.data)
 }, coords={
-    'time': np.concatenate(times),  # Combine all time coordinates
+    'time': np.concatenate(times),  # Concatenate all time coordinates from monthly files
     'latitude': Z500_lat0['latitude'],
     'longitude': Z500_lat0['longitude']
 })
@@ -103,5 +111,5 @@ encoding = {
 }
 
 # Save the dataset as a NetCDF file
-output_path = '/share/data1/Students/jfields/BlockingDataset/block_tag.20202022.nc'
+output_path = '/file_path/file_name.nc'
 result.to_netcdf(output_path, format='NETCDF4_CLASSIC', encoding=encoding)
