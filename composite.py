@@ -5,11 +5,21 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
-# INPUT FILES
-block_file = 'hgt.20202022_regionblock.nc'
-sst_file = 'sst_anomalies_detrended_2020_2022.nc'
+#########################################################################
+#REQUIRED USER INPUTS: 
 
-# LAG DAYS LIST
+#Line 19: Define file path and name for the region-filtered block ID file
+#Line 20: Define file path and name for the detrended SST anomaly file
+#Line 74: Define file path and name for composite output files
+#Line 114: Define file path for the composited date list file
+#Line 156: Define file path for the composite plot output file
+#########################################################################
+
+# Call in input files (region-filtered Block IDs and Detrended SST anomalies)
+block_file = '/file_path/regionblock.yyyymm1_yyyymm2.nc'
+sst_file = '/file_path/sst_anomalies_detrended.yyyymm1_yyyymm2.nc'
+
+# Designate days to lag SST anomalies from blocked days (e.g. 5 = 5 days before blocking onset)
 lag_days_list = [0, 5, 10, 15]
 
 # Load datasets
@@ -59,7 +69,7 @@ for lag_days in lag_days_list:
     compDiff = blockComp - nonComp
 
     # Save only compDiff to NetCDF
-    out_file = f'sst_compDiff_{lag_days}d.nc'
+    out_file = f'/file_path/sst_compDiff_{lag_days}d.nc'
     compDiff.to_dataset(name='compDiff').to_netcdf(out_file)
     print(f"compDiff saved to {out_file}")
 
@@ -101,7 +111,7 @@ for lag, dates in composite_dates.items():
 # Convert to DataFrame and save
 date_df = pd.DataFrame(date_records)
 date_df.sort_values(['lag_days', 'type', 'date'], inplace=True)
-date_df.to_csv('composite_dates.csv', index=False)
+date_df.to_csv('/file_path/composite_dates.csv', index=False)
 print("Composite date list saved to composite_dates.csv")
 
 # Determine shared color scale
@@ -143,7 +153,7 @@ cbar.set_label('SST Composite Difference')
 fig.suptitle("SST Composite Difference (Block - NonBlock) over Lag Days\n30°N–80°N, 70°W–0°E", fontsize=16)
 fig.subplots_adjust(wspace=0.1, hspace=0.2, top=0.92, bottom=0.15)
 
-plot_file = 'sst_composite_diff_4panel.png'
+plot_file = '/file_path/sst_composite_diff.png'
 plt.savefig(plot_file, dpi=300)
 plt.close()
 print(f"4-panel composite difference plot saved to {plot_file}")
