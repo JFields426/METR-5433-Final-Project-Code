@@ -2,12 +2,12 @@ import xarray as xr
 import numpy as np
 import glob
 
-#########################################################################################################
+###################################################################################################################
 #REQUIRED USER INPUTS
 #Line 22: Define preferred file path
 #Line 28: replace yyyymm to select file range (e.g. 'hgt.195001', 'hgt.202212.nc' for 1950-01 to 2022-12)
-#Line 113: Define preferred file path and file name
-#########################################################################################################
+#Line 113: Define preferred file path and file name (replace yyyymm1 to starting month and yyyymm2 to ending month)
+###################################################################################################################
 
 # Define the latitude ranges to calculate thresholds, including adjustments for latitudes above 70 degrees
 lat0_range = np.arange(35, 90.5, 0.5)  # Full range from 35 to 90 degrees
@@ -111,5 +111,5 @@ encoding = {
 }
 
 # Save the dataset as a NetCDF file
-output_path = '/file_path/file_name.nc'
+output_path = '/file_path/blocktag.yyyymm1_yyyymm2.nc'
 result.to_netcdf(output_path, format='NETCDF4_CLASSIC', encoding=encoding)
