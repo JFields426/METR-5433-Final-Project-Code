@@ -3,9 +3,16 @@ import netCDF4
 import pandas as pd
 from datetime import datetime, timedelta
 
+##################################################################################################################################
+#REQUIRED USER INPUTS: 
+
+#Line 15: Define file path for the region-filtered block ID file
+#Line 23: [OPTIONAL] Change the time resolution to reflect that of the input file. Only do this if the time resolution is not daily.
+#Line 99: Define the file path for the region-filtered block ID summary file
+##################################################################################################################################
+
 # Open NetCDF files
-nc = netCDF4.Dataset('/share/data1/Students/jfields/finalproj/hgt.20202022_regionblock.nc', 'r')
-hgt_nc = netCDF4.Dataset('/share/data1/Students/jfields/TempestExtremes/ERA5_hgt_500mb.19502022.nc', 'r')
+nc = netCDF4.Dataset('/file_path/regionblock.yyyymm1_yyyymm2.nc', 'r')
 
 # Read time variable and convert from "hours since 1900-01-01"
 time_var = nc.variables['time']
@@ -25,10 +32,6 @@ area_weights = np.outer(np.cos(lat_rad), np.ones(len(lon))) * dlat * dlon  # sha
 
 # Earth radius in km
 R = 6371
-
-# Open hgt data
-hgt_var = hgt_nc.variables['hgt']
-hgt_fill = hgt_var._FillValue
 
 # Dictionary to store block data
 block_data = {}
@@ -54,8 +57,6 @@ for t in range(nc.dimensions['time'].size):
                 'min_size_time': None,
                 'center_latitude': None,
                 'center_longitude': None,
-                'max_avg_hgt': None,
-                'max_avg_hgt_time': None
             }
         
         indices = np.where(block_slice == block)
@@ -76,18 +77,6 @@ for t in range(nc.dimensions['time'].size):
         # Time tracking
         block_data[block]['end_time'] = times[t]
         block_data[block]['duration_steps'] += 1
-        
-        # Get hgt values at the block's gridpoints
-        hgt_slice = hgt_var[t, :, :]
-        hgt_vals = hgt_slice[indices].astype(np.float32)
-        hgt_vals[hgt_vals == hgt_fill] = np.nan
-        
-        avg_hgt = np.nanmean(hgt_vals)
-        
-        # Update max average hgt
-        if block_data[block]['max_avg_hgt'] is None or avg_hgt > block_data[block]['max_avg_hgt']:
-            block_data[block]['max_avg_hgt'] = avg_hgt
-            block_data[block]['max_avg_hgt_time'] = times[t]
 
 # Add duration_days field
 for block in block_data:
@@ -103,12 +92,11 @@ df = df.reset_index()  # make block_id a column
 df = df[
     ['block_id', 'start_time', 'end_time', 'duration_days', 'duration_steps',
      'min_spatial_area_km2', 'min_size_time', 'max_spatial_area_km2',
-     'center_latitude', 'center_longitude',
-     'max_avg_hgt', 'max_avg_hgt_time']
+     'center_latitude', 'center_longitude']
 ]
 
 # Save CSV
-output_path = '/share/data1/Students/jfields/finalproj/20202022.regionblock_summary.csv'
+output_path = '/file_path/regionblock_summary.yyyymm1_yyyymm2.csv'
 df.to_csv(output_path, index=False)
 print(f"CSV file '{output_path}' has been created.")
 
