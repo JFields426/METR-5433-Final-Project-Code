@@ -21,3 +21,5 @@ THE FOLLOWING ORDERED LIST DESCRIBES THE STEPS TO COMPUTE AND TEST SIGNIFICANCE 
 8. composite.py - Calculates composite difference between blocked and non-blocked days and plots the resulting maps for each lag. Additionally, it creates a list of days considered blocked an non-blocked for each lag (this is important for significance testing).
 
 9. bootstrap.py - Tests significance of the composite differences using bootstrapping. Plots sample PDF histogram for a random point to visualize significance. Plots composite difference maps for each lag with stippling for stastistically significant points.
+
+If you have any questions, please contact Jacob Fields at jacobfields@ou.edu
