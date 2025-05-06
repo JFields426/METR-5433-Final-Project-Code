@@ -81,7 +81,7 @@ for lag_days in lag_days_list:
 
     # Select the desired region
     region_compDiff = compDiff.sel(
-        latitude=slice(80, 30),  # descending because latitude usually goes N to S
+        latitude=slice(80, 35),  # descending because latitude usually goes N to S
         longitude=slice(-70, 0)  # 70°W to 0°E (negative values)
     )
 
@@ -137,9 +137,9 @@ for i, lag in enumerate(lag_days_list):
     ax.set_title(f"Lag {lag} days", fontsize=12)
     ax.coastlines(resolution='50m', linewidth=1)
     ax.add_feature(cfeature.BORDERS, linewidth=0.5)
-    ax.set_extent([-70, 0, 30, 80], crs=ccrs.PlateCarree())
+    ax.set_extent([-70, 0, 35, 80], crs=ccrs.PlateCarree())
     ax.set_xticks(np.arange(-70, 1, 10), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(30, 81, 10), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(35, 81, 10), crs=ccrs.PlateCarree())
     ax.set_xlabel('Longitude', fontsize=10)
     ax.set_ylabel('Latitude', fontsize=10)
     ax.tick_params(labelsize=8)
@@ -150,7 +150,7 @@ cbar_ax = fig.add_axes([0.25, 0.05, 0.5, 0.02])  # [left, bottom, width, height]
 cbar = fig.colorbar(im, cax=cbar_ax, orientation='horizontal')
 cbar.set_label('SST Composite Difference')
 
-fig.suptitle("SST Composite Difference (Block - NonBlock) over Lag Days\n30°N–80°N, 70°W–0°E", fontsize=16)
+fig.suptitle("SST Composite Difference (Block - NonBlock) over Lag Days\n35°N–80°N, 70°W–0°E", fontsize=16)
 fig.subplots_adjust(wspace=0.1, hspace=0.2, top=0.92, bottom=0.15)
 
 plot_file = '/file_path/sst_composite_diff.png'
