@@ -1,1 +1,8 @@
-/share/data1/Students/jfields/BlockingDataset/trimmed_IB_overpole.19502022.nc
+###################################################################################################################
+#REQUIRED USER INPUTS: 
+
+#Line 8: Replace with file path of file created by IB_trimmed_overpole.py
+###################################################################################################################
+
+
+/file_path/blocktag.yyyymm_yyyymm.nc
