@@ -20,7 +20,7 @@ filtered_files = [f for f in all_files if re.match(r'.*/sst\.\d{6}\.nc$', f)]
 filtered_files.sort(key=lambda x: int(re.search(r'sst\.(\d{6})\.nc$', x).group(1)))
 climo_files = [f for f in filtered_files if 199101 <= int(re.search(r'sst\.(\d{6})\.nc$', f).group(1)) <= 202012]
 
-lat_min, lat_max = 30, 80
+lat_min, lat_max = 35, 80
 lon_min, lon_max = (-70 % 360), (0 % 360)  # 290 to 0 (wrap-around handled)
 
 daily_sst_list = []
