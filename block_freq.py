@@ -4,8 +4,15 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
+##################################################################################################################################
+#REQUIRED USER INPUTS: 
+
+#Line 15: Define file path for regional block ID dataset.
+#Line 75: Define file path for output frequency map.
+##################################################################################################################################
+
 # Load the dataset
-ds = xr.open_dataset('/share/data1/Students/jfields/finalproj/hgt.19502022_regionblock.nc')
+ds = xr.open_dataset('/file_path/regionblock.yyyymm1_yyyymm2.nc')
 
 # Convert longitude to 0–360
 ds = ds.assign_coords(longitude=(ds.longitude % 360))
@@ -65,7 +72,5 @@ plt.xlabel('Longitude')
 plt.ylabel('Latitude')
 
 # Save plot
-plt.savefig('19502022_frequency_map.png', dpi=300, bbox_inches='tight')
+plt.savefig('frequency_map.yyyymm1_yyyymm2.png', dpi=300, bbox_inches='tight')
 plt.close()
-
-print("Plot saved as '19502022_frequency_map.png'")
