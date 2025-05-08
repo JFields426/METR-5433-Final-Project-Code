@@ -12,7 +12,7 @@ import cartopy.feature as cfeature
 #Line 20: Define file path and name for the detrended SST anomaly file
 #Line 74: Define file path and name for composite output files
 #Line 114: Define file path for the composited date list file
-#Line 156: Define file path for the composite plot output file
+#Line 158: Define file path for the composite plot output file
 #########################################################################
 
 # Call in input files (region-filtered Block IDs and Detrended SST anomalies)
@@ -114,9 +114,11 @@ date_df.sort_values(['lag_days', 'type', 'date'], inplace=True)
 date_df.to_csv('/file_path/composite_dates.csv', index=False)
 print("Composite date list saved to composite_dates.csv")
 
-# Determine shared color scale
-vmin = min([composites[lag].min().item() for lag in composites])
-vmax = max([composites[lag].max().item() for lag in composites])
+# Determine shared color scale with symmetric bounds around zero
+all_min = min(composites[lag].min().item() for lag in composites)
+all_max = max(composites[lag].max().item() for lag in composites)
+absmax = max(abs(all_min), abs(all_max))
+vmin, vmax = -absmax, absmax
 
 # Create 4-panel figure
 fig, axs = plt.subplots(2, 2, figsize=(12, 10), subplot_kw={'projection': ccrs.PlateCarree()})
@@ -134,26 +136,26 @@ for i, lag in enumerate(lag_days_list):
         vmax=vmax,
         add_colorbar=False
     )
-    ax.set_title(f"Lag {lag} days", fontsize=12)
+    ax.set_title(f"{lag}-Day Lag", fontsize=14)
     ax.coastlines(resolution='50m', linewidth=1)
     ax.add_feature(cfeature.BORDERS, linewidth=0.5)
     ax.set_extent([-70, 0, 35, 80], crs=ccrs.PlateCarree())
     ax.set_xticks(np.arange(-70, 1, 10), crs=ccrs.PlateCarree())
-    ax.set_yticks(np.arange(35, 81, 10), crs=ccrs.PlateCarree())
+    ax.set_yticks(np.arange(35, 81, 5), crs=ccrs.PlateCarree())
     ax.set_xlabel('Longitude', fontsize=10)
     ax.set_ylabel('Latitude', fontsize=10)
     ax.tick_params(labelsize=8)
     ax.gridlines(draw_labels=False, linewidth=0.3, color='gray', linestyle='--')
 
 # Shared colorbar below all panels
-cbar_ax = fig.add_axes([0.25, 0.05, 0.5, 0.02])  # [left, bottom, width, height]
+cbar_ax = fig.add_axes([0.125, 0.1, 0.75, 0.03])  # [left, bottom, width, height]
 cbar = fig.colorbar(im, cax=cbar_ax, orientation='horizontal')
-cbar.set_label('SST Composite Difference')
+cbar.set_label('SST Composite Difference', fontsize=12)
 
-fig.suptitle("SST Composite Difference (Block - NonBlock) over Lag Days\n35°N–80°N, 70°W–0°E", fontsize=16)
-fig.subplots_adjust(wspace=0.1, hspace=0.2, top=0.92, bottom=0.15)
+fig.suptitle("Lagged SST Composite Differences (Blocked - Non-Blocked)", fontsize=18, fontweight='bold')
+fig.subplots_adjust(wspace=0.25, hspace=0, top=0.95, bottom=0.15)
 
-plot_file = '/file_path/sst_composite_diff.png'
+plot_file = '/file_path/sst_composite_diff.yyyymm1_yyyymm2.png'
 plt.savefig(plot_file, dpi=300)
 plt.close()
 print(f"4-panel composite difference plot saved to {plot_file}")
