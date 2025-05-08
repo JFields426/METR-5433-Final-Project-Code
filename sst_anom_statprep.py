@@ -4,7 +4,7 @@ import xarray as xr
 #REQUIRED USER INPUTS: 
 
 #Line 10: Define file path and name for the input file
-#Line 31: Define file path and name for the output file
+#Line 38: Define file path and name for the output file
 #########################################################################
 
 anom_input_path = '/file_path/sst_anomalies.yyyymm1_yyyymm2.nc'
@@ -25,10 +25,17 @@ trend = xr.polyval(time_numeric, coeffs.polyfit_coefficients)
 # Remove trend from original anomalies
 detrended_anomalies = anomalies - trend
 
-detrended_anomalies.name = 'sst_anom'
+# Standardize Anomalies
+mean = detrended_anomalies.mean(dim='time', skipna=True)
+std = detrended_anomalies.std(dim='time', skipna=True)
 
-#Save dataset
-output_path = '/file_path/sst_anomalies_detrended.yyyymm1_yyyymm2.nc'
-detrended_anomalies.to_netcdf(output_path, format='NETCDF4_CLASSIC')
+standardized_anomalies = (detrended_anomalies - mean) / std
 
-print(f"Detrended anomalies saved to {output_path}")
+# Name the variable explicitly
+standardized_anomalies.name = 'sst_anom'
+
+# Save standardized anomalies
+standardized_output_path = '/file_path/sst_anomalies_detrended_standardized.yyymm1_yyyymm2.nc'
+standardized_anomalies.to_netcdf(standardized_output_path, format='NETCDF4_CLASSIC')
+
+print(f"Detrended and standardized anomalies saved to {standardized_output_path}")
