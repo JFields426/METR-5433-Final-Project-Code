@@ -10,7 +10,7 @@ THE FOLLOWING ORDERED LIST DESCRIBES THE STEPS TO COMPUTE AND TEST SIGNIFICANCE 
 
 3. region_block.py - Determines the central coordinate of blocking events at their first time step. Subsequently isolates blocks that form in the Northern Atlantic reigon.
 
-4. blockinfo.py - Creates a .csv file with information for each block including duration, mininum and maximum size, etc. Useful for verifying the amount of unique blocking events. (NOTE: StitchBlobs gives each block a sequential ID based on start time. The region filtering does not reassign ID numbers, so non-consecutive block IDs is normal and expected.)
+4. blockinfo.py - Creates a .csv file with information for each block including duration, mininum and maximum size, etc. Useful for verifying the amount of unique blocking events. (NOTE: StitchBlobs gives each block a sequential ID based on start time. The region filtering does not reassign ID numbers, so non-consecutive block IDs are normal and expected.)
 
 5. sst_climo.py - Calculates SST climatology.
 
