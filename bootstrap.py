@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import cartopy.crs as ccrs
 import cartopy.feature as cfeature
 
-#########################################################################
+##########################################################################
 #REQUIRED USER INPUTS: 
 
 #Line 22: Define file path for the input composite files
@@ -13,8 +13,9 @@ import cartopy.feature as cfeature
 #Line 35: Define file path for the input composite date list file
 #Line 49: [OPTIONAL] Input coordinate value for reproducablity
 #Line 127: Define file path for the histogram plots output file
-#Line 178: Define file path for the stippled composite plots output file
-#########################################################################
+#Line 173: Define file path for the field-mean histogram plots output file
+#Line 225: Define file path for the stippled composite plots output file
+##########################################################################
 
 # Load composite differences
 composites = {}
@@ -124,10 +125,56 @@ for i, lag in enumerate(lags):
     ax.grid(True, linestyle='--', linewidth=0.5)
 
 plt.tight_layout()
-plt.savefig('bootstrap_histograms.yyyymm1_yyyym2.png', dpi=300)
+plt.savefig('/file_path/bootstrap_histograms.yyyymm1_yyyym2.png', dpi=300)
 plt.close()
 
-# === Plot Composite Maps ===
+# Plot histograms of sampled differences for the field mean
+
+fig, axs = plt.subplots(2, 2, figsize=(12, 10))
+axs = axs.flatten()
+
+for i, lag in enumerate(lags):
+    boot_array = boot_diffs_all[lag]
+    # Collapse each bootstrap sample into a spatial mean over the full field
+    field_means = []
+    for arr in boot_array:
+        da = xr.DataArray(arr, coords=composites[lag].coords, dims=composites[lag].dims)
+        # Apply ocean mask to only keep valid ocean points
+        masked_da = da.where(ocean_mask)
+        mean_val = masked_da.mean().item()
+        field_means.append(mean_val)
+    field_means = np.array(field_means)
+
+    # Actual composite mean
+    actual_field_mean = composites[lag].where(ocean_mask).mean().item()
+
+    # Percentiles
+    p5, p95 = np.percentile(field_means, [2.5, 97.5])
+    p10, p90 = np.percentile(field_means, [5, 95])
+
+    x_pad = (p95 - p5) * 0.3
+    x_min = min(p5, actual_field_mean) - x_pad
+    x_max = max(p95, actual_field_mean) + x_pad
+
+    ax = axs[i]
+    ax.hist(field_means, bins=60, density=True, color='lightgreen', edgecolor='gray')
+    ax.axvline(p5, color='red', linestyle='--', label='p<0.05')
+    ax.axvline(p95, color='red', linestyle='--')
+    ax.axvline(p10, color='orange', linestyle='--', label='p<0.10')
+    ax.axvline(p90, color='orange', linestyle='--')
+    ax.axvline(actual_field_mean, color='black', linestyle='-', label='Actual Field Mean')
+    ax.set_xlim(x_min, x_max)
+    ax.set_title(f'{lag}-Day Lag Field Mean', fontsize=12)
+    ax.set_xlabel('Field Composite Difference Mean (σ)')
+    ax.set_ylabel('PDF')
+    ax.legend(fontsize=8)
+    ax.grid(True, linestyle='--', linewidth=0.5)
+
+plt.tight_layout()
+plt.savefig('/file_path/bootstrap_field_histograms.yyyymm1_yyyymm2png', dpi=300)
+plt.close()
+
+# Plot Composite Maps
 all_min = min(composites[lag].min().item() for lag in composites)
 all_max = max(composites[lag].max().item() for lag in composites)
 absmax = max(abs(all_min), abs(all_max))
