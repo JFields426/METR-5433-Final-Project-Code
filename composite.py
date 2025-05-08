@@ -47,7 +47,7 @@ composite_dates = {}
 
 for lag_days in lag_days_list:
     # Apply lag
-    blockCompDates_lagged = blockCompDates - pd.to_timedelta(lag_days, unit='D')
+    blockCompDates_lagged = blockCompDates
     nonCompDates_lagged = nonCompDates - pd.to_timedelta(lag_days, unit='D')
 
     # Find matching indices in SST
