@@ -12,8 +12,8 @@ import cartopy.feature as cfeature
 #Line 30: Define file path and name for detrended SST anomaly input file
 #Line 35: Define file path for the input composite date list file
 #Line 49: [OPTIONAL] Input coordinate value for reproducablity
-#Line 125: Define file path for the histogram plots output file
-#Line 176: Define file path for the stippled composite plots output file
+#Line 127: Define file path for the histogram plots output file
+#Line 178: Define file path for the stippled composite plots output file
 #########################################################################
 
 # Load composite differences
@@ -104,23 +104,27 @@ for i, lag in enumerate(lags):
 
     p5, p95 = np.percentile(sample_vals, [2.5, 97.5])
     p10, p90 = np.percentile(sample_vals, [5, 95])
-    x_max = max(abs(sample_vals).max(), abs(actual_val)) * 1.1
+    
+    x_pad = (p95 - p5) * 0.3  # extra space on either side
+    x_min = min(p5, actual_val) - x_pad
+    x_max = max(p95, actual_val) + x_pad
 
     ax = axs[i]
-    ax.hist(sample_vals, bins=50, density=True, color='skyblue', edgecolor='gray')
+    ax.hist(sample_vals, bins=60, density=True, color='skyblue', edgecolor='gray')
     ax.axvline(p5, color='red', linestyle='--', label='p<0.05')
     ax.axvline(p95, color='red', linestyle='--')
     ax.axvline(p10, color='orange', linestyle='--', label='p<0.10')
     ax.axvline(p90, color='orange', linestyle='--')
     ax.axvline(actual_val, color='black', linestyle='-', label='Actual Value')
-    ax.set_xlim(-x_max, x_max)
-    ax.set_title(f'{lag}-Day Lag at ({lat_val:.1f}N, {lon_val:.1f}E)')
+    ax.set_xlim(x_min, x_max)
+    ax.set_title(f'{lag}-Day Lag at ({lat_val:.1f}N, {lon_val:.1f}E)', fontsize=12)
     ax.set_xlabel('Composite Difference (σ)')
     ax.set_ylabel('PDF')
-    ax.legend()
+    ax.legend(fontsize=8)
+    ax.grid(True, linestyle='--', linewidth=0.5)
 
 plt.tight_layout()
-plt.savefig('/file_path/bootstrap_histograms.png', dpi=300)
+plt.savefig('bootstrap_histograms.yyyymm1_yyyym2.png', dpi=300)
 plt.close()
 
 # === Plot Composite Maps ===
@@ -171,5 +175,5 @@ cbar.set_label('SST Composite Difference (σ)')
 fig.suptitle("Lagged Standardized SST Anomaly Composite Differences\n(Blocked - Non-Blocked) (p < 0.05)", fontsize=18, fontweight='bold')
 fig.subplots_adjust(wspace=0.25, hspace=0, top=0.95, bottom=0.15)
 
-plt.savefig('/file_path/sst_composite_sig_final.png', dpi=300)
+plt.savefig('/file_path/sst_composite.yyyymm1_yyyymm2.png', dpi=300)
 plt.close()
